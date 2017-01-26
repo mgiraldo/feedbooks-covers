@@ -104,7 +104,7 @@ void drawBook() {
   float up_x = 0.0, up_y = 0.0, up_z = 0.0;
 
   eye_x = getCategoryValue("author");
-  eye_y = getCategoryValue("title") * 5;
+  eye_y = map(getCategoryValue("title"), 0, 100, 200, 600);
   eye_z = 1.0 * (getCategoryValue("title") + getCategoryValue("author"));
   
   up_y = 1.0;
