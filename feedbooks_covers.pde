@@ -11,7 +11,7 @@ JSONObject book;
 int current_book = 0;
 
 int timer = 0;
-int refresh_rate = 100;
+int refresh_rate = 200;
 
 float cover_width = 400.0;
 float cover_height = 600.0;
@@ -52,17 +52,20 @@ void draw() {
   int lang_second = int(book.getString("language").charAt(1)) % 30;
   int lang_third = int(book.getString("language").charAt(2)) % 30;
   int type = book.getString("type") == "fiction" ? 50 : 0;
-  int category = book.getString("category").length();
+  float category_value = getCategoryValue(); 
   
   float hue = lang_first + author_first + title_first;
   float saturation = 50 + type;
-  float brightness = 70 + (category * 2);
+  float brightness = 70 + (category_value % 30);
 
   colorMode(HSB, 100, 100, 100);
   background(color(hue, saturation, brightness));
 
+  // draw book
   float title_height = drawSentence(title);
   drawSentence(author, x_ini, y_ini + title_height + line_height);
+  // end draw book
+
   if (refresh && millis() > timer + refresh_rate) {
     timer = millis();
     nextBook();
@@ -85,6 +88,16 @@ void draw() {
     saveFrame("output.png");
     record = false;
   }
+}
+
+float getCategoryValue() {
+  float value = 0.0;
+  String cat = book.getString("category");
+  for (int i=0; i < cat.length(); i++) {
+    value = value + float(cat.charAt(i));
+  }
+  value = value % 100;
+  return value;
 }
 
 float drawSentence(String sentence) {
@@ -112,6 +125,9 @@ float drawSentence(String sentence, float start_x, float start_y) {
     float first_letter = word.charAt(0);
     float rotation = float(i % circle_divisions) * (360.0 / float(circle_divisions));
     z = word_length * depth_multiplier;
+    if (i % 2 == 0) {
+      z = -z;
+    }
     if (x + word_width > cover_width) {
       x = start_x;
       y = y + line_height * 2;
@@ -124,7 +140,7 @@ float drawSentence(String sentence, float start_x, float start_y) {
     rotateZ(radians(first_letter % 180));
     popMatrix();
     colorMode(RGB, 360, 360, 360);
-    fill(color(rotation + 90));
+    fill(color(360 - rotation % 180));
     rect(0, 0, word_width, line_height);
     popMatrix();
     x = x + word_width + letter_size;
