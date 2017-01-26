@@ -1,10 +1,12 @@
 import peasy.*;
 import processing.pdf.*;
 
-PeasyCam cam;
+//PeasyCam cam;
 
 boolean record;
 boolean refresh = false;
+boolean drew = false;
+boolean outline = true;
 
 JSONArray books;
 JSONObject book;
@@ -32,7 +34,7 @@ void setup() {
   books = loadJSONArray("feedbooks.json");
   println("loaded", books.size(), "books");
   getBook();
-  cam = new PeasyCam(this, width * .5, height * .5, 0, 1000);
+  //cam = new PeasyCam(this, width * .5, height * .5, 0, 1000);
   //cam.setMinimumDistance(50);
   //cam.setMaximumDistance(50000);
   println("ratio", ratio);
@@ -52,7 +54,7 @@ void draw() {
   int lang_second = int(book.getString("language").charAt(1)) % 30;
   int lang_third = int(book.getString("language").charAt(2)) % 30;
   int type = book.getString("type") == "fiction" ? 50 : 0;
-  float category_value = getCategoryValue(); 
+  float category_value = getCategoryValue("category"); 
   
   float hue = lang_first + author_first + title_first;
   float saturation = 50 + type;
@@ -61,28 +63,26 @@ void draw() {
   colorMode(HSB, 100, 100, 100);
   background(color(hue, saturation, brightness));
 
-  // draw book
-  float title_height = drawSentence(title);
-  drawSentence(author, x_ini, y_ini + title_height + line_height);
-  // end draw book
+  drawBook();
 
   if (refresh && millis() > timer + refresh_rate) {
     timer = millis();
     nextBook();
-    println(current_book);
   }
   
   // white border rect
-  pushMatrix();
-  colorMode(HSB, 100, 100, 100);
-  stroke(color(0, 0, 100));
-  noFill();
-  rect(0, 0, cover_width, cover_height);
-  noStroke();
-  fill(color(0, 0, 100));
-  popMatrix();
+  if (outline) {
+    pushMatrix();
+    colorMode(HSB, 100, 100, 100);
+    stroke(color(0, 0, 100));
+    noFill();
+    rect(0, 0, cover_width, cover_height);
+    noStroke();
+    fill(color(0, 0, 100));
+    popMatrix();
+  }
   // end white border rect
-
+  
   if (record) {
     endRaw();
     saveFrame("output.png");
@@ -90,13 +90,46 @@ void draw() {
   }
 }
 
-float getCategoryValue() {
+void drawBook() {
+  int author_first = int(author.charAt(0)) % 30;
+  int title_first = int(title.charAt(0)) % 30;
+  int lang_first = int(book.getString("language").charAt(0)) % 30;
+  int lang_second = int(book.getString("language").charAt(1)) % 30;
+  int lang_third = int(book.getString("language").charAt(2)) % 30;
+  int type = book.getString("type") == "fiction" ? 50 : 0;
+  float category_value = getCategoryValue("category");
+  
+  float center_x = cover_width * 0.5, center_y = 0.0, center_z = 0.0;
+  float eye_x = 0.0, eye_y = 0.0, eye_z = 0.0;
+  float up_x = 0.0, up_y = 0.0, up_z = 0.0;
+
+  eye_x = getCategoryValue("author");
+  eye_y = getCategoryValue("title") * 5;
+  eye_z = 1.0 * (getCategoryValue("title") + getCategoryValue("author"));
+  
+  up_y = 1.0;
+  
+  if (!drew) {
+    println(current_book);
+    println(eye_x, eye_y, eye_z, center_x, center_y, center_z);
+    drew = true;
+  }
+  
+  float title_height = drawSentence(title);
+  drawSentence(author, x_ini, y_ini + title_height + line_height);
+
+  camera(eye_x, eye_y, eye_z, center_x, center_y, center_z, 
+       up_x, up_y, up_z);
+}
+
+float getCategoryValue(String category) {
   float value = 0.0;
-  String cat = book.getString("category");
+  String cat = book.getString(category);
   for (int i=0; i < cat.length(); i++) {
     value = value + float(cat.charAt(i));
   }
-  value = value % 100;
+  if (value > 2500) value = 2500;
+  value = map(value, 0, 2500, 0, 100);
   return value;
 }
 
@@ -149,11 +182,13 @@ float drawSentence(String sentence, float start_x, float start_y) {
 }
 
 void prevBook() {
+  drew = false;
   current_book--;
   if (current_book < 0) current_book = books.size() - 1;
 }
 
 void nextBook() {
+  drew = false;
   current_book++;
   if (current_book >= books.size()) current_book = 0;
 }
@@ -177,5 +212,8 @@ void keyPressed() {
   }
   if (key == 'a') {
     refresh = !refresh;
+  }
+  if (key == 'o') {
+    outline = !outline;
   }
 }
