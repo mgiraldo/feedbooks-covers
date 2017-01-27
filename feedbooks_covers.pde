@@ -50,21 +50,21 @@ void setup() {
 }
 
 void draw() {
-  if (record) {
-    beginRaw(PDF, "output.pdf");
-  }
+  //if (record) {
+  //  pg.beginRaw(PDF, "output.pdf");
+  //}
 
   getBook();
-  
+
   drawBook();
 
   if (refresh && millis() > timer + refresh_rate) {
     timer = millis();
     nextBook();
   }
-  
+
   if (record) {
-    endRaw();
+    //endRaw();
     saveFrame("output.png");
     record = false;
   }
@@ -76,24 +76,24 @@ void drawBook() {
   float lang_value = getColumnAsNumber("language");
   float category_value = getColumnAsNumber("category"); 
   int type = getColumnValue("type") == "fiction" ? 25 : 0;
-  
+
   float hue = lang_value + title_value + author_value;
   float saturation = 75 + type;
   float brightness = 50 + (category_value * 0.30);
 
   pg.beginDraw();
-  colorMode(HSB, 300, 100, 100);
-  pg.background(color(hue, saturation, brightness));
+  pg.colorMode(HSB, 300, 100, 100);
+  pg.background(hue, saturation, brightness);
   pg.noStroke();
 
   float center_x = cover_width * 0.5, center_y = cover_height * 0.25, center_z = 0.0;
   float eye_x = 0.0, eye_y = 0.0, eye_z = 0.0;
   float up_x = 0.0, up_y = 0.0, up_z = 0.0;
- 
+
   eye_x = center_x;
   eye_y = map(title_value, 0, 100, 600, 1000);
   eye_z = map(title_value + author_value, 0, 200, 0, 600);
-  
+
   if (title_value + author_value < 60) {
     eye_x = title_value + author_value;
     center_x = title_value + author_value;
@@ -106,7 +106,7 @@ void drawBook() {
   } else {
     up_x = -1.0;
   }
-  
+
   if (!drew) {
     println();
     println(current_book, title, author);
@@ -116,21 +116,20 @@ void drawBook() {
     println("up :", up_x, up_y, up_z);
     drew = true;
   }
-  
+
   // draw sentences
   pg.lights();
   float title_height = drawSentence(title);
   drawSentence(author, x_ini, y_ini + title_height + line_height);
   // end draw
 
-  
+
   // white border rect
   if (outline) {
     pg.pushMatrix();
     pg.translate(0, 0, -100);
-    pg.fill(color(0, 0, 100, 75));
+    pg.fill(0, 0, 100, 50);
     pg.rect(0, 0, cover_width, cover_height);
-    pg.fill(color(0, 0, 100));
     pg.popMatrix();
   }
   // end white border rect
@@ -138,19 +137,41 @@ void drawBook() {
   pg.beginCamera();
   pg.camera(eye_x, eye_y, eye_z, center_x, center_y, center_z, up_x, up_y, up_z);
   pg.endCamera();
-  
+
   pg.endDraw();
   image(pg, 0, 0);
   
-  //pushMatrix();
-  fill(0);
+  // text stuff
+  pushMatrix();
+  if (category_value == 0) {
+    textAlign(RIGHT);
+    translate(width * .35 - margin * 2, 0);
+  } else {
+    textAlign(LEFT);
+  }
+
+  colorMode(HSB, 300, 100, 100);
+  fill(hue, saturation, brightness, 100);
   textFont(title_font);
-  textLeading(60);
-  text(title, margin, margin, width - margin * 2, (height - margin * 2) * .4);
-  textFont(author_font);
-  textLeading(60);
-  text(author, margin, height * .5, width - margin * 2, (height - margin * 2) * .4);
-  //popMatrix();
+  textLeading(65);
+
+  pushMatrix();
+  translate(-10, 0);
+  text(title, margin, margin, width * .65, (height - margin * 2) * .4);
+  text(author, margin, height * .5, width * .65, (height - margin * 2) * .4);
+  popMatrix();
+
+  pushMatrix();
+  translate(10, 0);
+  text(title, margin, margin, width * .65, (height - margin * 2) * .4);
+  text(author, margin, height * .5, width * .65, (height - margin * 2) * .4);
+  popMatrix();
+
+  fill(255);
+  text(title, margin, margin, width * .65, (height - margin * 2) * .4);
+  text(author, margin, height * .5, width * .65, (height - margin * 2) * .4);
+
+  popMatrix();
 }
 
 float getColumnAsNumber(String column) {
@@ -165,7 +186,7 @@ float getColumnAsNumber(String column) {
 }
 
 String getColumnValue(String column) {
-   return book.getString(column);
+  return book.getString(column);
 }
 
 float drawSentence(String sentence) {
@@ -178,7 +199,7 @@ float drawSentence(String sentence, float start_x, float start_y) {
   int tries = 20;
   while (!finished && tries > 0) {
     // clean sentence from double spaces (screws up split)
-    sentence = sentence.replaceAll("  "," ");
+    sentence = sentence.replaceAll("  ", " ");
     if (!sentence.contains("  ")) {
       finished = true;
     }
@@ -208,7 +229,7 @@ float drawSentence(String sentence, float start_x, float start_y) {
     //rotateZ(radians(first_letter % 180));
     pg.popMatrix();
     //colorMode(RGB, 360, 360, 360);
-    pg.fill(color(0, 0, 100));
+    pg.fill(0, 0, 100, 75);
     pg.rect(0, 0, word_width, line_height);
     pg.popMatrix();
     x = x + word_width + letter_size;
