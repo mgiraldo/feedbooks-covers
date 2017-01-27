@@ -15,7 +15,7 @@ JSONObject book;
 int current_book = 0;
 
 int timer = 0;
-int refresh_rate = 1000;
+int refresh_rate = 500;
 
 float cover_width = 700.0;
 float cover_height = 1050.0;
