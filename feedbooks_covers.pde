@@ -14,7 +14,7 @@ JSONObject book;
 int current_book = 0;
 
 int timer = 0;
-int refresh_rate = 800;
+int refresh_rate = 1;
 
 float cover_width = 700.0;
 float cover_height = 1050.0;
@@ -70,11 +70,6 @@ void draw() {
 
   drawBook();
 
-  if (refresh && millis() > timer + refresh_rate) {
-    timer = millis();
-    nextBook();
-  }
-
   if (record) {
     //endRaw();
     String urn = getColumnValue("urn");
@@ -82,6 +77,11 @@ void draw() {
     id = id.replace(".epub","");
     saveFrame("output/" + id + ".png");
     record = false;
+  }
+
+  if (refresh && millis() > timer + refresh_rate) {
+    timer = millis();
+    nextBook();
   }
 }
 
@@ -178,7 +178,7 @@ void drawBook() {
 
   pg.endDraw();
   image(pg, 0, 0);
-  
+
   // text stuff
   pushMatrix();
   float text_width;
