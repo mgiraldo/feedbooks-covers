@@ -32,6 +32,10 @@ String author;
 PGraphics pg;
 PFont title_font;
 PFont author_font;
+int title_size = 60;
+int title_leading = title_size + 5;
+int author_size = 45;
+int author_leading = author_size + 5;
 
 void setup() {
   size(700, 1050, P3D);
@@ -42,8 +46,8 @@ void setup() {
   //String[] fontList = PFont.list();
   //printArray(fontList);
   pg = createGraphics(width, height, P3D);
-  title_font = createFont("AvenirNext-Bold", 60);
-  author_font = createFont("Baskerville-Italic", 60);
+  title_font = createFont("AvenirNext-Bold", title_size);
+  author_font = createFont("AvenirNext-Bold", author_size);
   //cam = new PeasyCam(this, width * .5, height * .5, 0, 1000);
   //cam.setMinimumDistance(50);
   //cam.setMaximumDistance(50000);
@@ -152,23 +156,33 @@ void drawBook() {
 
   colorMode(HSB, 300, 100, 100);
   fill(hue, saturation, brightness, 100);
-  textFont(title_font);
-  textLeading(65);
 
   pushMatrix();
   translate(-10, 0);
+  textFont(title_font);
+  textLeading(title_leading);
   text(title, margin, margin, width * .65, (height - margin * 2) * .4);
+  textFont(author_font);
+  textLeading(author_leading);
   text(author, margin, height * .5, width * .65, (height - margin * 2) * .4);
   popMatrix();
 
   pushMatrix();
   translate(10, 0);
+  textFont(title_font);
+  textLeading(title_leading);
   text(title, margin, margin, width * .65, (height - margin * 2) * .4);
+  textFont(author_font);
+  textLeading(author_leading);
   text(author, margin, height * .5, width * .65, (height - margin * 2) * .4);
   popMatrix();
 
   fill(255);
+  textFont(title_font);
+  textLeading(title_leading);
   text(title, margin, margin, width * .65, (height - margin * 2) * .4);
+  textFont(author_font);
+  textLeading(author_leading);
   text(author, margin, height * .5, width * .65, (height - margin * 2) * .4);
 
   popMatrix();
