@@ -58,6 +58,7 @@ void draw() {
 
   colorMode(HSB, 300, 100, 100);
   background(color(hue, saturation, brightness));
+  noStroke();
 
   drawBook();
 
@@ -69,11 +70,10 @@ void draw() {
   // white border rect
   if (outline) {
     pushMatrix();
+    translate(0, 0, -100);
     colorMode(HSB, 100, 100, 100);
-    stroke(color(0, 0, 100));
-    noFill();
+    fill(color(0, 0, 100, 75));
     rect(0, 0, cover_width, cover_height);
-    noStroke();
     fill(color(0, 0, 100));
     popMatrix();
   }
@@ -120,8 +120,10 @@ void drawBook() {
     drew = true;
   }
   
+  // draw sentences
   float title_height = drawSentence(title);
   drawSentence(author, x_ini, y_ini + title_height + line_height);
+  // end draw
 
   beginCamera();
   camera(eye_x, eye_y, eye_z, center_x, center_y, center_z, up_x, up_y, up_z);
@@ -174,7 +176,7 @@ float drawSentence(String sentence, float start_x, float start_y) {
     if (x + word_width > cover_width) {
       x = start_x;
       y = y + line_height * 2;
-      sentence_height = sentence_height + line_height;
+      sentence_height = sentence_height + line_height * 3;
     }
     pushMatrix();
     translate(x, y, -z);
@@ -220,7 +222,7 @@ void keyPressed() {
   if (key == 'r') {
     record = true;
   }
-  if (key == 'a') {
+  if (key == 'a' || key == ' ') {
     refresh = !refresh;
   }
   if (key == 'o') {
