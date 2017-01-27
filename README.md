@@ -1,7 +1,7 @@
 # feedbooks-covers
 
 
-![sample](https://github.com/mgiraldo/feedbooks-covers/raw/master/output.png)
+<img src="https://github.com/mgiraldo/feedbooks-covers/raw/master/output.png" width="200">
 
 a generative book cover based on some feedbooks.com public domain data
 
