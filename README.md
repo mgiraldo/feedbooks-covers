@@ -6,8 +6,8 @@ built with [Processing 3](//processing.org)
 
 keyboard controls:
 
-- `a` starts/stops auto refresh (step thru every book)
+- `a` or `spacebar` starts/stops auto refresh (step thru every book)
 - `o` show/hide book outline
 - `←` goes to previous book
 - `→` goes to next book
-- `r` saves the current frame as `output.pdf` and `output.png`
+- `r` or `s` saves the current frame as `output.pdf` and `output.png`
