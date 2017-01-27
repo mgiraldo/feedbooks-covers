@@ -20,10 +20,10 @@ float cover_height = 1050.0;
 float ratio = cover_height / cover_width;
 float x_ini = 10;
 float y_ini = 10;
-float depth_multiplier = 10;
+float depth_multiplier = 12;
 float letter_size = cover_width / 20.0;
 float line_height = letter_size * 2.0;
-int circle_divisions = 4; // for rotations
+int rotation_factor = 4; // for rotations
 
 String title;
 String author;
@@ -109,6 +109,7 @@ void drawBook() {
   }
   
   // draw sentences
+  lights();
   float title_height = drawSentence(title);
   drawSentence(author, x_ini, y_ini + title_height + line_height);
   // end draw
@@ -168,8 +169,8 @@ float drawSentence(String sentence, float start_x, float start_y) {
     String word = words[i];
     int word_length = word.length();
     float word_width = letter_size * word_length;
-    float first_letter = word.charAt(0);
-    float rotation = float(i % circle_divisions) * (360.0 / float(circle_divisions));
+    float rotation = float(word_length * rotation_factor);// * (360.0 / float(rotation_factor));
+    if (word_length % 2 == 0) rotation = -rotation;
     z = word_length * depth_multiplier;
     if (i % 2 == 0) {
       z = -z;
@@ -181,12 +182,12 @@ float drawSentence(String sentence, float start_x, float start_y) {
     }
     pushMatrix();
     translate(x, y, -z);
-    rotateY(radians(rotation * -1));
+    rotateY(radians(rotation));
     pushMatrix();
-    rotateZ(radians(first_letter % 180));
+    //rotateZ(radians(first_letter % 180));
     popMatrix();
-    colorMode(RGB, 360, 360, 360);
-    fill(color(360 - rotation % 180));
+    //colorMode(RGB, 360, 360, 360);
+    fill(color(0, 0, 100));
     rect(0, 0, word_width, line_height);
     popMatrix();
     x = x + word_width + letter_size;
