@@ -4,6 +4,7 @@ import processing.pdf.*;
 //PeasyCam cam;
 
 boolean record;
+boolean mass_record = false;
 boolean refresh = false;
 boolean drew = false;
 boolean outline = true;
@@ -14,7 +15,7 @@ JSONObject book;
 int current_book = 0;
 
 int timer = 0;
-int refresh_rate = 1;
+int refresh_rate = 1000;
 
 float cover_width = 700.0;
 float cover_height = 1050.0;
@@ -27,8 +28,7 @@ float line_height = letter_size * 2.0;
 int rotation_factor = 4;
 float margin = 20;
 
-String title;
-String author;
+String title, author, urn, id, type, language, category;
 boolean is_fiction = false;
 boolean is_english = false;
 float hue, saturation, brightness;
@@ -45,9 +45,8 @@ void setup() {
   textMode(SHAPE);
   books = loadJSONArray("feedbooks.json");
   println("loaded", books.size(), "books");
-  getBook();
-  String[] fontList = PFont.list();
-  printArray(fontList);
+  //String[] fontList = PFont.list();
+  //printArray(fontList);
   pg = createGraphics(width, height, P3D);
   title_font_sans = createFont("AvenirNext-Bold", title_size);
   author_font_sans = createFont("AvenirNext-Regular", author_size);
@@ -59,6 +58,12 @@ void setup() {
 }
 
 void draw() {
+  if (refresh && (millis() > timer + refresh_rate)) {
+    timer = millis();
+    nextBook();
+    if (mass_record) record = true;
+  }
+
   //if (record) {
   //  pg.beginRaw(PDF, "output.pdf");
   //}
@@ -72,27 +77,15 @@ void draw() {
 
   if (record) {
     //endRaw();
-    String urn = getColumnValue("urn");
-    String id = urn.substring(30);
-    id = id.replace(".epub","");
     saveFrame("output/" + id + ".png");
     record = false;
-  }
-
-  if (refresh && millis() > timer + refresh_rate) {
-    timer = millis();
-    nextBook();
   }
 }
 
 void drawBook() {
-  float author_value = getColumnValue("author").length();
-  float title_value = getColumnValue("title").length();
-  float category_value = getColumnAsNumber("category");
-  String lang = getColumnValue("language");
-  is_english = (lang.equals("eng"));
-  String type = getColumnValue("type");
-  is_fiction = (type.equals("fiction"));
+  float author_value = author.length();
+  float title_value = title.length();
+  float category_value = category.length();
   int type_amount = is_fiction ? 25 : 0;
 
   if (title_value > 40) title_value = 40;
@@ -106,6 +99,7 @@ void drawBook() {
   brightness = 50 + (category_value * 0.30);
 
   pg.beginDraw();
+  pg.clear();
   pg.hint(DISABLE_DEPTH_TEST);
   pg.colorMode(HSB, 200, 100, 100);
   if (is_english) {
@@ -140,7 +134,7 @@ void drawBook() {
     println();
     println(current_book, title, author);
     println("hsb:", hue, saturation, brightness);
-    println("txt:", author_value, title_value, category_value, lang, type);
+    println("txt:", author_value, title_value, category_value, language, type);
     println("num:", eye_x, eye_y, eye_z, center_x, center_y, center_z);
     println("up :", up_x, up_y, up_z);
     drew = true;
@@ -345,6 +339,13 @@ void getBook() {
   book = books.getJSONObject(current_book);
   title = getColumnValue("title");
   author = getColumnValue("author");
+  urn = getColumnValue("urn");
+  id = urn.substring(30);
+  type = getColumnValue("type");
+  language = getColumnValue("language");
+  category = getColumnValue("category");
+  is_english = language.equals("eng");
+  is_fiction = type.equals("fiction");
 }
 
 // Hit 'r' to record a single frame
@@ -360,6 +361,9 @@ void keyPressed() {
   }
   if (key == 'a' || key == ' ') {
     refresh = !refresh;
+  }
+  if (key == 'm') {
+    mass_record = !mass_record;
   }
   if (key == 'o') {
     outline = !outline;
