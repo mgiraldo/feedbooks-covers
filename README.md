@@ -1,5 +1,8 @@
 # feedbooks-covers
 
+
+![sample](https://github.com/mgiraldo/feedbooks-covers/raw/master/output.png)
+
 a generative book cover based on some feedbooks.com public domain data
 
 built with [Processing 3](//processing.org)
