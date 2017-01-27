@@ -51,11 +51,11 @@ void draw() {
   float author_value = getColumnAsNumber("author");
   float title_value = getColumnAsNumber("title");
   float lang_value = getColumnAsNumber("language");
-  int type = getColumnValue("type") == "fiction" ? 50 : 0;
+  int type = getColumnValue("type") == "fiction" ? 25 : 0;
   float category_value = getColumnAsNumber("category"); 
   
   float hue = lang_value + title_value + author_value;
-  float saturation = 50 + type;
+  float saturation = 75 + type;
   float brightness = 50 + (category_value % 30);
 
   colorMode(HSB, 300, 100, 100);
