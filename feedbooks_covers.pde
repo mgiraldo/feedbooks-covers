@@ -1,4 +1,4 @@
-import peasy.*;
+//import peasy.*;
 import processing.pdf.*;
 
 //PeasyCam cam;
@@ -48,19 +48,17 @@ void draw() {
 
   getBook();
   
-  int author_first = int(author.charAt(0)) % 30;
-  int title_first = int(title.charAt(0)) % 30;
-  int lang_first = int(book.getString("language").charAt(0)) % 30;
-  int lang_second = int(book.getString("language").charAt(1)) % 30;
-  int lang_third = int(book.getString("language").charAt(2)) % 30;
-  int type = book.getString("type") == "fiction" ? 50 : 0;
-  float category_value = getCategoryValue("category"); 
+  float author_value = getColumnAsNumber("author");
+  float title_value = getColumnAsNumber("title");
+  float lang_value = getColumnAsNumber("language");
+  int type = getColumnValue("type") == "fiction" ? 50 : 0;
+  float category_value = getColumnAsNumber("category"); 
   
-  float hue = lang_first + author_first + title_first;
+  float hue = lang_value + title_value + author_value;
   float saturation = 50 + type;
-  float brightness = 70 + (category_value % 30);
+  float brightness = 50 + (category_value % 30);
 
-  colorMode(HSB, 100, 100, 100);
+  colorMode(HSB, 300, 100, 100);
   background(color(hue, saturation, brightness));
 
   drawBook();
@@ -91,46 +89,50 @@ void draw() {
 }
 
 void drawBook() {
-  int author_first = int(author.charAt(0)) % 30;
-  int title_first = int(title.charAt(0)) % 30;
-  int lang_first = int(book.getString("language").charAt(0)) % 30;
-  int lang_second = int(book.getString("language").charAt(1)) % 30;
-  int lang_third = int(book.getString("language").charAt(2)) % 30;
-  int type = book.getString("type") == "fiction" ? 50 : 0;
-  float category_value = getCategoryValue("category");
-  
   float center_x = cover_width * 0.5, center_y = 0.0, center_z = 0.0;
   float eye_x = 0.0, eye_y = 0.0, eye_z = 0.0;
   float up_x = 0.0, up_y = 0.0, up_z = 0.0;
 
-  eye_x = getCategoryValue("author");
-  eye_y = map(getCategoryValue("title"), 0, 100, 200, 600);
-  eye_z = 1.0 * (getCategoryValue("title") + getCategoryValue("author"));
+  float author_value = getColumnAsNumber("author"); 
+  float title_value = getColumnAsNumber("title");
+  float genre_value = getColumnAsNumber("category");
+
+  eye_x = genre_value * 2;
+  eye_y = map(title_value, 0, 100, 200, 600);
+  eye_z = 1.0 * (title_value + author_value);
   
-  up_y = 1.0;
+  //if (author_value > 75) up_x = 1.0;
+  //if (title_value > 50) up_y = 1.0;
+  //if (author_value + title_value < 50) up_z = 1.0;
+  up_x = -1.0;
   
   if (!drew) {
     println(current_book);
-    println(eye_x, eye_y, eye_z, center_x, center_y, center_z);
+    println(eye_x, eye_y, eye_z, center_x, center_y, center_z, "|", up_x, up_y, up_z);
     drew = true;
   }
   
   float title_height = drawSentence(title);
   drawSentence(author, x_ini, y_ini + title_height + line_height);
 
-  camera(eye_x, eye_y, eye_z, center_x, center_y, center_z, 
-       up_x, up_y, up_z);
+  beginCamera();
+  camera(eye_x, eye_y, eye_z, center_x, center_y, center_z, up_x, up_y, up_z);
+  endCamera();
 }
 
-float getCategoryValue(String category) {
+float getColumnAsNumber(String column) {
   float value = 0.0;
-  String cat = book.getString(category);
+  String cat = getColumnValue(column);
   for (int i=0; i < cat.length(); i++) {
     value = value + float(cat.charAt(i));
   }
-  if (value > 2500) value = 2500;
-  value = map(value, 0, 2500, 0, 100);
+  if (value > 3000) value = 3000;
+  value = map(value, 0, 3000, 0, 100);
   return value;
+}
+
+String getColumnValue(String column) {
+   return book.getString(column);
 }
 
 float drawSentence(String sentence) {
@@ -195,8 +197,8 @@ void nextBook() {
 
 void getBook() {
   book = books.getJSONObject(current_book);
-  title = book.getString("title");
-  author = book.getString("author");
+  title = getColumnValue("title");
+  author = getColumnValue("author");
 }
 
 // Hit 'r' to record a single frame
