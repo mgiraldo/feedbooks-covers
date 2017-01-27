@@ -15,21 +15,21 @@ int current_book = 0;
 int timer = 0;
 int refresh_rate = 200;
 
-float cover_width = 400.0;
-float cover_height = 600.0;
+float cover_width = 700.0;
+float cover_height = 1050.0;
 float ratio = cover_height / cover_width;
 float x_ini = 10;
 float y_ini = 10;
 float depth_multiplier = 10;
 float letter_size = cover_width / 20.0;
-float line_height = letter_size * 3.0;
+float line_height = letter_size * 2.0;
 int circle_divisions = 4; // for rotations
 
 String title;
 String author;
 
 void setup() {
-  size(1000, 800, P3D);
+  size(700, 1050, P3D);
   textMode(SHAPE);
   books = loadJSONArray("feedbooks.json");
   println("loaded", books.size(), "books");
@@ -37,8 +37,6 @@ void setup() {
   //cam = new PeasyCam(this, width * .5, height * .5, 0, 1000);
   //cam.setMinimumDistance(50);
   //cam.setMaximumDistance(50000);
-  println("ratio", ratio);
-  println(".", int("."));
 }
 
 void draw() {
@@ -89,7 +87,7 @@ void draw() {
 }
 
 void drawBook() {
-  float center_x = cover_width * 0.5, center_y = 0.0, center_z = 0.0;
+  float center_x = cover_width * 0.5, center_y = cover_height * 0.25, center_z = 0.0;
   float eye_x = 0.0, eye_y = 0.0, eye_z = 0.0;
   float up_x = 0.0, up_y = 0.0, up_z = 0.0;
 
@@ -97,18 +95,28 @@ void drawBook() {
   float title_value = getColumnAsNumber("title");
   float genre_value = getColumnAsNumber("category");
 
-  eye_x = genre_value * 2;
-  eye_y = map(title_value, 0, 100, 200, 600);
-  eye_z = 1.0 * (title_value + author_value);
+  eye_x = center_x;
+  eye_y = map(title_value, 0, 100, 600, 1000);
+  eye_z = map(title_value + author_value, 0, 200, 300, 600);
   
+  if (title_value + author_value < 60) {
+    eye_x = title_value + author_value;
+    center_x = title_value + author_value;
+  }
   //if (author_value > 75) up_x = 1.0;
   //if (title_value > 50) up_y = 1.0;
   //if (author_value + title_value < 50) up_z = 1.0;
-  up_x = -1.0;
+  if (genre_value == 0) {
+    up_x = 1.0;
+  } else {
+    up_x = -1.0;
+  }
   
   if (!drew) {
-    println(current_book);
-    println(eye_x, eye_y, eye_z, center_x, center_y, center_z, "|", up_x, up_y, up_z);
+    println(current_book, title, author);
+    println("txt:", author_value, title_value, genre_value);
+    println("num:", eye_x, eye_y, eye_z, center_x, center_y, center_z);
+    println("up :", up_x, up_y, up_z);
     drew = true;
   }
   
