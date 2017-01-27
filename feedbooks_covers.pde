@@ -85,7 +85,7 @@ void drawBook() {
 
   eye_x = center_x;
   eye_y = map(title_value, 0, 100, 600, 1000);
-  eye_z = map(title_value + author_value, 0, 200, 300, 600);
+  eye_z = map(title_value + author_value, 0, 200, 0, 600);
   
   if (title_value + author_value < 60) {
     eye_x = title_value + author_value;
