@@ -67,18 +67,6 @@ void draw() {
     nextBook();
   }
   
-  // white border rect
-  if (outline) {
-    pushMatrix();
-    translate(0, 0, -100);
-    colorMode(HSB, 100, 100, 100);
-    fill(color(0, 0, 100, 75));
-    rect(0, 0, cover_width, cover_height);
-    fill(color(0, 0, 100));
-    popMatrix();
-  }
-  // end white border rect
-  
   if (record) {
     endRaw();
     saveFrame("output.png");
@@ -124,6 +112,19 @@ void drawBook() {
   float title_height = drawSentence(title);
   drawSentence(author, x_ini, y_ini + title_height + line_height);
   // end draw
+
+  
+  // white border rect
+  if (outline) {
+    pushMatrix();
+    translate(0, 0, -100);
+    colorMode(HSB, 100, 100, 100);
+    fill(color(0, 0, 100, 75));
+    rect(0, 0, cover_width, cover_height);
+    fill(color(0, 0, 100));
+    popMatrix();
+  }
+  // end white border rect
 
   beginCamera();
   camera(eye_x, eye_y, eye_z, center_x, center_y, center_z, up_x, up_y, up_z);
