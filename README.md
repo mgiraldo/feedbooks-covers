@@ -10,4 +10,4 @@ keyboard controls:
 - `o` show/hide book outline
 - `←` goes to previous book
 - `→` goes to next book
-- `r` saves the current frame into `output` folder
+- `r` saves the current frame as `output.pdf` and `output.png`
