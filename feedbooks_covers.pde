@@ -1,5 +1,3 @@
-import processing.pdf.*; //<>//
-
 boolean record;
 boolean mass_record = false;
 boolean debug_output = false;
