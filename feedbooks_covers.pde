@@ -158,24 +158,33 @@ void moveCamera(float title_value, float author_value) {
   up_y = 0.0;
   up_z = 0.0;
 
-  eye_x = center_x;
-  eye_y = map(title_value, 0, 100, 600, 1000);
+  eye_x = center_x * 1.0;
+  eye_y = map(title_value, 0, 100, 750, 1500);
   eye_z = map(title_value + author_value, 0, 200, 0, 600);
 
-  //if (language.equals("eng")) {
-  //} else if (language.equals("spa")) {
-  //  eye_x = cover_width * 2.0;
-  //  eye_y = cover_height * 2.0;
-  //  eye_z = eye_z * 2.0;
-  //} else if (language.equals("ita")) {
-  //} else if (language.equals("ger")) {
-  //} else if (language.equals("fre")) {
-  //}
-
-  if (title_value + author_value < 60) {
-    eye_x = title_value + author_value;
-    center_x = title_value + author_value;
+  if (language.equals("fre")) {
+    eye_x = cover_width * 2.5;
+    eye_y = map(title_value, 0, 100, 300, 600);
+    eye_z = map(title_value + author_value, 0, 200, 500, 800);
+  } else if (language.equals("spa")) {
+    eye_x = cover_width * -0.5;
+    eye_y = cover_height * 1.5;
+    eye_z = eye_z * 2.5;
+  } else if (language.equals("ita")) {
+    eye_x = cover_width * 0.5;
+    eye_y = cover_height * 1.0;
+    eye_z = map(title_value + author_value, 0, 200, -1000, -1500);
+  } else if (language.equals("ger")) {
+    eye_x = cover_width * 0.5;
+    eye_y = map(title_value, 0, 100, 300, 1400);
+    eye_z = map(title_value + author_value, 0, 200, 1000, 1600);
+  } else if (language.equals("eng")) {
   }
+
+  //if (title_value + author_value < 60) {
+  //  eye_x = title_value + author_value;
+  //  center_x = title_value + author_value;
+  //}
 
   if (is_fiction) {
     up_x = 1.0;
@@ -192,7 +201,7 @@ void moveCamera(float title_value, float author_value) {
     println();
     println(current_book, id, title, author);
     println("hsb:", hue, saturation, brightness);
-    println("txt:", author_value, title_value, category, language, type);
+    println("txt:", language, type, author_value, title_value, category);
     println("num:", eye_x, eye_y, eye_z, center_x, center_y, center_z);
     println("up :", up_x, up_y, up_z);
   }
