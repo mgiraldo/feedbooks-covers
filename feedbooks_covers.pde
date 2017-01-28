@@ -10,7 +10,7 @@ JSONObject book;
 int current_book = 0;
 
 int last_frame = 0;
-int refresh_rate = 6;
+int refresh_rate = 40;
 
 float cover_width = 700.0;
 float cover_height = 1050.0;
@@ -136,7 +136,7 @@ void drawArtwork() {
   // “page”
   pg.pushMatrix();
   pg.translate(0, 0, -100);
-  if (is_english) {
+  if (is_english || language.equals("ita")) {
     pg.rect(0, 0, cover_width, cover_height);
   } else {
     pg.ellipseMode(CENTER);
@@ -360,9 +360,14 @@ float drawSentence(String sentence, float start_x, float start_y) {
     pg.popMatrix();
     if (is_english) {
       pg.fill(hue, saturation, brightness, 75);
-      pg.rect(0, 0, word_width, line_height);
     } else {
       pg.fill(0, 0, 100, 75);
+    }
+    if (is_english || language.equals("ger")) {
+      pg.rect(0, 0, word_width, line_height);
+    } else if (language.equals("fre")) {
+      pg.rect(0, 0, word_width, word_width);
+    } else {
       pg.ellipseMode(CORNER);
       pg.ellipse(0, 0, word_width, word_width);
     }
