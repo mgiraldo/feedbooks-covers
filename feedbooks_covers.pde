@@ -1,4 +1,4 @@
-import processing.pdf.*;
+import processing.pdf.*; //<>//
 
 boolean record;
 boolean mass_record = false;
@@ -55,7 +55,7 @@ void setup() {
 }
 
 void draw() {
-  if (refresh && frame_passed && (frameCount > last_frame + refresh_rate)) { //<>//
+  if (frame_passed && refresh && (frameCount > last_frame + refresh_rate)) {
     last_frame = frameCount;
     nextBook();
     if (mass_record) {
