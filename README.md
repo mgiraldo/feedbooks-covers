@@ -12,7 +12,7 @@ built with [Processing 3](//processing.org)
 
 keyboard controls:
 
-- `A` or `spacebar` starts/stops auto refresh (step thru every book)
+- `A` or `SPACEBAR` starts/stops auto refresh (step thru every book)
 - `←` or `↑` goes to previous book
 - `→` or `↓`  goes to next book
 - `R` or `S` saves the current book in the output folder
