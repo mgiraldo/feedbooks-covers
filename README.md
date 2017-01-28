@@ -7,6 +7,10 @@
 <img src="https://github.com/mgiraldo/feedbooks-covers/raw/master/output4.png" width="200">
 <img src="https://github.com/mgiraldo/feedbooks-covers/raw/master/output5.png" width="200">
 <img src="https://github.com/mgiraldo/feedbooks-covers/raw/master/output6.png" width="200">
+<img src="https://github.com/mgiraldo/feedbooks-covers/raw/master/output7.png" width="200">
+<img src="https://github.com/mgiraldo/feedbooks-covers/raw/master/output8.png" width="200">
+<img src="https://github.com/mgiraldo/feedbooks-covers/raw/master/output10.png" width="200">
+<img src="https://github.com/mgiraldo/feedbooks-covers/raw/master/output9.png" width="200">
 
 A generative book cover based on some feedbooks.com public domain data
 
