@@ -11,7 +11,7 @@ JSONArray books;
 JSONObject book;
 int current_book = 0;
 
-int timer = 0;
+int last_frame = 0;
 int refresh_rate = 100;
 
 float cover_width = 700.0;
@@ -55,10 +55,12 @@ void setup() {
 }
 
 void draw() {
-  if (refresh && (millis() > timer + refresh_rate)) {
-    timer = millis();
+  if (refresh && frame_passed && (frameCount > last_frame + refresh_rate)) {
+    last_frame = frameCount;
     nextBook();
-    if (mass_record) record = true;
+    if (mass_record) {
+      record = true;
+    }
   }
 
   getBook();
@@ -68,10 +70,12 @@ void draw() {
   drawBook();
   image(pg, 0, 0);
 
-  if (record) {
+  if (frame_passed && record) {
     pg.save("output/" + current_book + ".png");
     record = false;
   }
+
+  frame_passed = true;
 }
 
 void drawBook() {
