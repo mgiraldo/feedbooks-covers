@@ -21,7 +21,7 @@ float depth_multiplier = 12;
 float letter_size = cover_width / 20.0;
 float line_height = letter_size * 2.0;
 int rotation_factor = 4;
-float margin = 20;
+float margin = 40;
 float up_x = 0.0, up_y = 0.0, up_z = 0.0;
 
 String title, author, urn, id, type, language, category;
