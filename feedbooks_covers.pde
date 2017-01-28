@@ -5,6 +5,7 @@ import processing.pdf.*;
 
 boolean record;
 boolean mass_record = false;
+boolean debug_output = false;
 boolean refresh = false;
 boolean drew = false;
 boolean outline = true;
@@ -15,7 +16,7 @@ JSONObject book;
 int current_book = 0;
 
 int timer = 0;
-int refresh_rate = 500;
+int refresh_rate = 100;
 
 float cover_width = 700.0;
 float cover_height = 1050.0;
@@ -27,6 +28,7 @@ float letter_size = cover_width / 20.0;
 float line_height = letter_size * 2.0;
 int rotation_factor = 4;
 float margin = 20;
+float up_x = 0.0, up_y = 0.0, up_z = 0.0;
 
 String title, author, urn, id, type, language, category;
 boolean is_fiction = false;
@@ -34,6 +36,8 @@ boolean is_english = false;
 float hue, saturation, brightness;
 
 PGraphics pg;
+PMatrix mat_scene;
+
 PFont title_font_sans, author_font_sans, title_font_serif, author_font_serif;
 int title_size = 55;
 int title_leading = title_size + 5;
@@ -42,11 +46,11 @@ int author_leading = author_size + 5;
 
 void setup() {
   size(700, 1050, P3D);
-  textMode(SHAPE);
   books = loadJSONArray("feedbooks.json");
   println("loaded", books.size(), "books");
-  //String[] fontList = PFont.list();
-  //printArray(fontList);
+  String[] fontList = PFont.list();
+  printArray(fontList);
+  mat_scene = getMatrix();
   pg = createGraphics(width, height, P3D);
   title_font_sans = createFont("AvenirNext-Bold", title_size);
   author_font_sans = createFont("AvenirNext-Regular", author_size);
@@ -68,16 +72,16 @@ void draw() {
   //  pg.beginRaw(PDF, "output.pdf");
   //}
   
-  colorMode(RGB, 255, 255, 255);
-  background(255);
-
   getBook();
 
+  colorMode(RGB, 255, 255, 255);
+  background(255);
   drawBook();
+  image(pg, 0, 0);
 
   if (record) {
     //endRaw();
-    saveFrame("output/" + id + ".png");
+    pg.save("output/" + current_book + ".png");
     record = false;
   }
 }
@@ -99,52 +103,41 @@ void drawBook() {
   brightness = 50 + (category_value * 0.30);
 
   pg.beginDraw();
-  pg.clear();
-  pg.hint(DISABLE_DEPTH_TEST);
   pg.colorMode(HSB, 200, 100, 100);
-  if (is_english) {
-    pg.background(hue, saturation, brightness, 10);
-  } else {
-    pg.background(hue, saturation, brightness);
-  }
   pg.noStroke();
+  pg.hint(DISABLE_DEPTH_TEST);
+  pg.textMode(MODEL);
 
-  float center_x = cover_width * 0.5, center_y = cover_height * 0.25, center_z = 0.0;
-  float eye_x = 0.0, eye_y = 0.0, eye_z = 0.0;
-  float up_x = 0.0, up_y = 0.0, up_z = 0.0;
+  drawBackground();
+  
+  drawArtwork();
+  
+  moveCamera(title_value, author_value, category_value);
+  
+  drawText();
+  
+  drawDebug();
+  
+  pg.endDraw();
 
-  eye_x = center_x;
-  eye_y = map(title_value, 0, 100, 600, 1000);
-  eye_z = map(title_value + author_value, 0, 200, 0, 600);
+}
 
-  if (title_value + author_value < 60) {
-    eye_x = title_value + author_value;
-    center_x = title_value + author_value;
-  }
-  //if (author_value > 75) up_x = 1.0;
-  //if (title_value > 50) up_y = 1.0;
-  //if (author_value + title_value < 50) up_z = 1.0;
-  if (is_fiction) {
-    up_x = 1.0;
+void drawBackground() {
+  pg.pushMatrix();
+  pg.setMatrix(mat_scene);
+  pg.fill(200);
+  pg.rect(0, 0, width, height);
+
+  if (is_english) {
+    pg.fill(hue, saturation, brightness, 10);
   } else {
-    up_z = -1.0;
+    pg.fill(hue, saturation, brightness);
   }
+  pg.rect(0, 0, width, height);
+  pg.popMatrix();
+}
 
-  if (!drew) {
-    println();
-    println(current_book, title, author);
-    println("hsb:", hue, saturation, brightness);
-    println("txt:", author_value, title_value, category_value, language, type);
-    println("num:", eye_x, eye_y, eye_z, center_x, center_y, center_z);
-    println("up :", up_x, up_y, up_z);
-    drew = true;
-  }
-
-  // draw sentences
-  //pg.lights();
-  float title_height = drawSentence(title);
-  drawSentence(author, x_ini, y_ini + title_height + line_height);
-  // end draw
+void drawArtwork() {
   pg.colorMode(HSB, 200, 100, 100);
   if (is_english) {
     pg.fill(hue, saturation, brightness, 50);
@@ -165,93 +158,148 @@ void drawBook() {
     pg.popMatrix();
   }
   // end white border rect
+  
+  // floating “words”
+  float title_height = drawSentence(title);
+  drawSentence(author, x_ini, y_ini + title_height + line_height);
+}
+
+void moveCamera(float title_value, float author_value, float category_value) {
+  float center_x = cover_width * 0.5, center_y = cover_height * 0.25, center_z = 0.0;
+  float eye_x = 0.0, eye_y = 0.0, eye_z = 0.0;
+
+  up_x = 0.0;
+  up_y = 0.0;
+  up_z = 0.0;
+
+  eye_x = center_x;
+  eye_y = map(title_value, 0, 100, 600, 1000);
+  eye_z = map(title_value + author_value, 0, 200, 0, 600);
+
+  if (title_value + author_value < 60) {
+    eye_x = title_value + author_value;
+    center_x = title_value + author_value;
+  }
+  //if (author_value > 75) up_x = 1.0;
+  //if (title_value > 50) up_y = 1.0;
+  //if (author_value + title_value < 50) up_z = 1.0;
+  if (is_fiction) {
+    up_x = 1.0;
+  } else {
+    up_z = -1.0;
+  }
 
   pg.beginCamera();
   pg.camera(eye_x, eye_y, eye_z, center_x, center_y, center_z, up_x, up_y, up_z);
   pg.endCamera();
 
-  pg.endDraw();
-  image(pg, 0, 0);
+  if (!drew) {
+    println();
+    println(current_book, id, title, author);
+    println("hsb:", hue, saturation, brightness);
+    println("txt:", author_value, title_value, category_value, language, type);
+    println("num:", eye_x, eye_y, eye_z, center_x, center_y, center_z);
+    println("up :", up_x, up_y, up_z);
+    drew = true;
+  }
+}
 
+void drawText() {
   // text stuff
-  pushMatrix();
+  pg.pushMatrix();
+  pg.setMatrix(mat_scene);
   float text_width;
   if (is_fiction) {
-    textAlign(LEFT);
+    pg.textAlign(LEFT);
     text_width = width * .80;
     //translate(width * .35 - margin * 2, 0);
   } else {
-    textAlign(CENTER);
+    pg.textAlign(CENTER);
     text_width = width - margin * 6;
-    translate(margin * 2, 0);
+    pg.translate(margin * 2, 0);
   }
 
-  colorMode(HSB, 200, 100, 100);
+  pg.colorMode(HSB, 200, 100, 100);
   if (is_english) {
-    fill(hue, saturation, brightness, 25);
+    pg.fill(hue, saturation, brightness, 25);
   } else {
-    fill(0, 0, 100, 25);
+    pg.fill(0, 0, 100, 25);
   }
 
   if (text_shadow_on) {
-    pushMatrix();
-    translate(-10, 0);
+    pg.pushMatrix();
+    pg.translate(-10, 0);
     if (is_fiction) {
-      textFont(title_font_serif);
+      pg.textFont(title_font_serif);
     } else {
-      textFont(title_font_sans);
+      pg.textFont(title_font_sans);
     }
-    textLeading(title_leading);
-    text(title, margin, margin, text_width, (height - margin * 2) * .4);
+    pg.textLeading(title_leading);
+    pg.text(title, margin, margin, text_width, (height - margin * 2) * .4);
     if (is_fiction) {
-      textFont(author_font_serif);
+      pg.textFont(author_font_serif);
     } else {
-      textFont(author_font_sans);
+      pg.textFont(author_font_sans);
     }
-    textLeading(author_leading);
-    text(author, margin, height * .5, text_width, (height - margin * 2) * .4);
-    popMatrix();
+    pg.textLeading(author_leading);
+    pg.text(author, margin, height * .5, text_width, (height - margin * 2) * .4);
+    pg.popMatrix();
   
-    pushMatrix();
-    translate(10, 0);
+    pg.pushMatrix();
+    pg.translate(10, 0);
     if (is_fiction) {
-      textFont(title_font_serif);
+      pg.textFont(title_font_serif);
     } else {
-      textFont(title_font_sans);
+      pg.textFont(title_font_sans);
     }
-    textLeading(title_leading);
-    text(title, margin, margin, text_width, (height - margin * 2) * .4);
+    pg.textLeading(title_leading);
+    pg.text(title, margin, margin, text_width, (height - margin * 2) * .4);
     if (is_fiction) {
-      textFont(author_font_serif);
+      pg.textFont(author_font_serif);
     } else {
-      textFont(author_font_sans);
+      pg.textFont(author_font_sans);
     }
-    textLeading(author_leading);
-    text(author, margin, height * .5, text_width, (height - margin * 2) * .4);
-    popMatrix();
+    pg.textLeading(author_leading);
+    pg.text(author, margin, height * .5, text_width, (height - margin * 2) * .4);
+    pg.popMatrix();
   }
 
   if (is_english) {
-    fill(hue, saturation, brightness);
+    pg.fill(hue, saturation, brightness);
   } else {
-    fill(200);
+    pg.fill(200);
   }
   if (is_fiction) {
-    textFont(title_font_serif);
+    pg.textFont(title_font_serif);
   } else {
-    textFont(title_font_sans);
+    pg.textFont(title_font_sans);
   }
-  textLeading(title_leading);
-  text(title, margin, margin, text_width, (height - margin * 2) * .4);
+  pg.textLeading(title_leading);
+  pg.text(title, margin, margin, text_width, (height - margin * 2) * .4);
   if (is_fiction) {
-    textFont(author_font_serif);
+    pg.textFont(author_font_serif);
   } else {
-    textFont(author_font_sans);
+    pg.textFont(author_font_sans);
   }
-  textLeading(author_leading);
-  text(author, margin, height * .5, text_width, (height - margin * 2) * .4);
+  pg.textLeading(author_leading);
+  pg.text(author, margin, height * .5, text_width, (height - margin * 2) * .4);
 
-  popMatrix();
+  pg.popMatrix();
+}
+
+void drawDebug() {
+  if (debug_output) {
+    pg.pushMatrix();
+    pg.setMatrix(mat_scene);
+    PFont debugFont = createFont("InputMono-Regular", 12);
+    pg.fill(0);
+    pg.textFont(debugFont);
+    pg.textAlign(LEFT);
+    String debug_txt = "up:" + up_x + "," + up_y + "," + up_z;
+    debug_txt += " rec:" + record + " ref:" + refresh + " mass:" + mass_record;
+    pg.text(debug_txt, margin, height - author_size);
+    pg.popMatrix();
+  }
 }
 
 float getColumnAsNumber(String column) {
@@ -350,10 +398,10 @@ void getBook() {
 
 // Hit 'r' to record a single frame
 void keyPressed() {
-  if (keyCode == 39) {
+  if (keyCode == 39 || keyCode == 40) {
     nextBook();
   }
-  if (keyCode == 37) {
+  if (keyCode == 37 || keyCode == 38) {
     prevBook();
   }
   if (key == 'r' || key == 's') {
@@ -364,6 +412,9 @@ void keyPressed() {
   }
   if (key == 'm') {
     mass_record = !mass_record;
+  }
+  if (key == 'd') {
+    debug_output = !debug_output;
   }
   if (key == 'o') {
     outline = !outline;
