@@ -69,7 +69,7 @@ void draw() {
   image(pg, 0, 0);
 
   if (record) {
-    pg.save("output/" + id + ".png");
+    pg.save("output/" + id + "_" + author.replaceAll(" ", "_") + ".png");
     record = false;
   }
 }
