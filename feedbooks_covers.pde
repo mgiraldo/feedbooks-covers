@@ -12,7 +12,7 @@ JSONObject book;
 int current_book = 0;
 
 int last_frame = 0;
-int refresh_rate = 100;
+int refresh_rate = 6;
 
 float cover_width = 700.0;
 float cover_height = 1050.0;
@@ -44,8 +44,8 @@ void setup() {
   size(700, 1050, P3D);
   books = loadJSONArray("feedbooks.json");
   println("loaded", books.size(), "books");
-  String[] fontList = PFont.list();
-  printArray(fontList);
+  //String[] fontList = PFont.list();
+  //printArray(fontList);
   mat_scene = getMatrix();
   pg = createGraphics(width, height, P3D);
   title_font_sans = createFont("AvenirNext-Bold", title_size);
@@ -55,7 +55,7 @@ void setup() {
 }
 
 void draw() {
-  if (refresh && frame_passed && (frameCount > last_frame + refresh_rate)) {
+  if (refresh && frame_passed && (frameCount > last_frame + refresh_rate)) { //<>//
     last_frame = frameCount;
     nextBook();
     if (mass_record) {
@@ -71,7 +71,7 @@ void draw() {
   image(pg, 0, 0);
 
   if (frame_passed && record) {
-    pg.save("output/" + current_book + ".png");
+    pg.save("output/" + id + ".png");
     record = false;
   }
 
@@ -188,7 +188,6 @@ void moveCamera(float title_value, float author_value, float category_value) {
     println("txt:", author_value, title_value, category_value, language, type);
     println("num:", eye_x, eye_y, eye_z, center_x, center_y, center_z);
     println("up :", up_x, up_y, up_z);
-    frame_passed = true;
   }
 }
 
