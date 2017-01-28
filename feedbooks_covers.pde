@@ -341,7 +341,8 @@ float drawSentence(String sentence, float start_x, float start_y) {
     String word = words[i];
     int word_length = word.length();
     float word_width = letter_size * word_length;
-    float rotation = float(word_length * rotation_factor);
+    float first_letter_offset = map(float(word.charAt(0)), 50, 500, 5, 60);
+    float rotation = first_letter_offset + float(word_length * rotation_factor);
     if (word_length % 2 == 0) rotation = -rotation;
     z = word_length * depth_multiplier;
     if (i % 2 == 0) {
