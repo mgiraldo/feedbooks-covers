@@ -10,8 +10,9 @@ built with [Processing 3](//processing.org)
 
 keyboard controls:
 
-- `a` or `spacebar` starts/stops auto refresh (step thru every book)
-- `o` show/hide book outline
-- `←` goes to previous book
-- `→` goes to next book
-- `r` or `s` saves the current frame as `output.pdf` and `output.png`
+- `A` or `spacebar` starts/stops auto refresh (step thru every book)
+- `⬅` or `⬆` goes to previous book
+- `➡` or `⬇`  goes to next book
+- `R` or `S` saves the current book in the output folder
+- `M` toggles mass record (activated with auto refresh)
+- `D` shows debug info in the cover (included on save)

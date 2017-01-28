@@ -1,14 +1,10 @@
-//import peasy.*;
 import processing.pdf.*;
-
-//PeasyCam cam;
 
 boolean record;
 boolean mass_record = false;
 boolean debug_output = false;
 boolean refresh = false;
-boolean drew = false;
-boolean outline = true;
+boolean frame_passed = false;
 boolean text_shadow_on = false;
 
 JSONArray books;
@@ -56,9 +52,6 @@ void setup() {
   author_font_sans = createFont("AvenirNext-Regular", author_size);
   title_font_serif = createFont("Superclarendon-Black", title_size);
   author_font_serif = createFont("Superclarendon-Light", author_size);
-  //cam = new PeasyCam(this, width * .5, height * .5, 0, 1000);
-  //cam.setMinimumDistance(50);
-  //cam.setMaximumDistance(50000);
 }
 
 void draw() {
@@ -68,10 +61,6 @@ void draw() {
     if (mass_record) record = true;
   }
 
-  //if (record) {
-  //  pg.beginRaw(PDF, "output.pdf");
-  //}
-  
   getBook();
 
   colorMode(RGB, 255, 255, 255);
@@ -80,7 +69,6 @@ void draw() {
   image(pg, 0, 0);
 
   if (record) {
-    //endRaw();
     pg.save("output/" + current_book + ".png");
     record = false;
   }
@@ -145,19 +133,17 @@ void drawArtwork() {
     pg.fill(0, 0, 100, 50);
   }
 
-  // white border rect
-  if (outline) {
-    pg.pushMatrix();
-    pg.translate(0, 0, -100);
-    if (is_english) {
-      pg.rect(0, 0, cover_width, cover_height);
-    } else {
-      pg.ellipseMode(CENTER);
-      pg.ellipse(cover_width * .5, cover_height * .5, cover_height, cover_height);
-    }
-    pg.popMatrix();
+  // “page”
+  pg.pushMatrix();
+  pg.translate(0, 0, -100);
+  if (is_english) {
+    pg.rect(0, 0, cover_width, cover_height);
+  } else {
+    pg.ellipseMode(CENTER);
+    pg.ellipse(cover_width * .5, cover_height * .5, cover_height, cover_height);
   }
-  // end white border rect
+  pg.popMatrix();
+  // end “page”
   
   // floating “words”
   float title_height = drawSentence(title);
@@ -180,9 +166,7 @@ void moveCamera(float title_value, float author_value, float category_value) {
     eye_x = title_value + author_value;
     center_x = title_value + author_value;
   }
-  //if (author_value > 75) up_x = 1.0;
-  //if (title_value > 50) up_y = 1.0;
-  //if (author_value + title_value < 50) up_z = 1.0;
+
   if (is_fiction) {
     up_x = 1.0;
   } else {
@@ -193,14 +177,14 @@ void moveCamera(float title_value, float author_value, float category_value) {
   pg.camera(eye_x, eye_y, eye_z, center_x, center_y, center_z, up_x, up_y, up_z);
   pg.endCamera();
 
-  if (!drew) {
+  if (!frame_passed) {
     println();
     println(current_book, id, title, author);
     println("hsb:", hue, saturation, brightness);
     println("txt:", author_value, title_value, category_value, language, type);
     println("num:", eye_x, eye_y, eye_z, center_x, center_y, center_z);
     println("up :", up_x, up_y, up_z);
-    drew = true;
+    frame_passed = true;
   }
 }
 
@@ -212,7 +196,6 @@ void drawText() {
   if (is_fiction) {
     pg.textAlign(LEFT);
     text_width = width * .80;
-    //translate(width * .35 - margin * 2, 0);
   } else {
     pg.textAlign(CENTER);
     text_width = width - margin * 6;
@@ -339,7 +322,7 @@ float drawSentence(String sentence, float start_x, float start_y) {
     String word = words[i];
     int word_length = word.length();
     float word_width = letter_size * word_length;
-    float rotation = float(word_length * rotation_factor);// * (360.0 / float(rotation_factor));
+    float rotation = float(word_length * rotation_factor);
     if (word_length % 2 == 0) rotation = -rotation;
     z = word_length * depth_multiplier;
     if (i % 2 == 0) {
@@ -354,9 +337,7 @@ float drawSentence(String sentence, float start_x, float start_y) {
     pg.translate(x, y, -z);
     pg.rotateY(radians(rotation));
     pg.pushMatrix();
-    //rotateZ(radians(first_letter % 180));
     pg.popMatrix();
-    //colorMode(RGB, 360, 360, 360);
     if (is_english) {
       pg.fill(hue, saturation, brightness, 75);
       pg.rect(0, 0, word_width, line_height);
@@ -372,13 +353,13 @@ float drawSentence(String sentence, float start_x, float start_y) {
 }
 
 void prevBook() {
-  drew = false;
+  frame_passed = false;
   current_book--;
   if (current_book < 0) current_book = books.size() - 1;
 }
 
 void nextBook() {
-  drew = false;
+  frame_passed = false;
   current_book++;
   if (current_book >= books.size()) current_book = 0;
 }
@@ -396,7 +377,6 @@ void getBook() {
   is_fiction = type.equals("fiction");
 }
 
-// Hit 'r' to record a single frame
 void keyPressed() {
   if (keyCode == 39 || keyCode == 40) {
     nextBook();
@@ -415,8 +395,5 @@ void keyPressed() {
   }
   if (key == 'd') {
     debug_output = !debug_output;
-  }
-  if (key == 'o') {
-    outline = !outline;
   }
 }
