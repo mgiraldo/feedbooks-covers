@@ -1,4 +1,4 @@
-# feedbooks-covers
+# Feedbooks covers
 
 
 <img src="https://github.com/mgiraldo/feedbooks-covers/raw/master/output1.png" width="200">
@@ -6,11 +6,11 @@
 <img src="https://github.com/mgiraldo/feedbooks-covers/raw/master/output2.png" width="200">
 <img src="https://github.com/mgiraldo/feedbooks-covers/raw/master/output4.png" width="200">
 
-a generative book cover based on some feedbooks.com public domain data
+A generative book cover based on some feedbooks.com public domain data
 
-built with [Processing 3](//processing.org)
+Built with [Processing 3](//processing.org)
 
-keyboard controls:
+Keyboard controls:
 
 - `A` or `SPACEBAR` starts/stops auto refresh (step thru every book)
 - `←` or `↑` goes to previous book
