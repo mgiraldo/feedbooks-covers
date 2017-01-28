@@ -5,6 +5,8 @@
 <img src="https://github.com/mgiraldo/feedbooks-covers/raw/master/output3.png" width="200">
 <img src="https://github.com/mgiraldo/feedbooks-covers/raw/master/output2.png" width="200">
 <img src="https://github.com/mgiraldo/feedbooks-covers/raw/master/output4.png" width="200">
+<img src="https://github.com/mgiraldo/feedbooks-covers/raw/master/output5.png" width="200">
+<img src="https://github.com/mgiraldo/feedbooks-covers/raw/master/output6.png" width="200">
 
 A generative book cover based on some feedbooks.com public domain data
 
