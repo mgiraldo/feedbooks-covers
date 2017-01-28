@@ -53,7 +53,7 @@ void setup() {
 }
 
 void draw() {
-  if (frame_passed && refresh && (frameCount > last_frame + refresh_rate)) {
+  if (refresh && (frameCount > last_frame + refresh_rate)) {
     last_frame = frameCount;
     nextBook();
     if (mass_record) {
@@ -68,12 +68,10 @@ void draw() {
   drawBook();
   image(pg, 0, 0);
 
-  if (frame_passed && record) {
+  if (record) {
     pg.save("output/" + id + ".png");
     record = false;
   }
-
-  frame_passed = true;
 }
 
 void drawBook() {
@@ -98,11 +96,11 @@ void drawBook() {
   pg.hint(DISABLE_DEPTH_TEST);
   pg.textMode(MODEL);
 
+  moveCamera(title_value, author_value);
+  
   drawBackground();
   
   drawArtwork();
-  
-  moveCamera(title_value, author_value, category_value);
   
   drawText();
   
@@ -152,10 +150,10 @@ void drawArtwork() {
   drawSentence(author, x_ini, y_ini + title_height + line_height);
 }
 
-void moveCamera(float title_value, float author_value, float category_value) {
+void moveCamera(float title_value, float author_value) {
   float center_x = cover_width * 0.5, center_y = cover_height * 0.25, center_z = 0.0;
   float eye_x = 0.0, eye_y = 0.0, eye_z = 0.0;
-
+  
   up_x = 0.0;
   up_y = 0.0;
   up_z = 0.0;
@@ -163,6 +161,16 @@ void moveCamera(float title_value, float author_value, float category_value) {
   eye_x = center_x;
   eye_y = map(title_value, 0, 100, 600, 1000);
   eye_z = map(title_value + author_value, 0, 200, 0, 600);
+
+  //if (language.equals("eng")) {
+  //} else if (language.equals("spa")) {
+  //  eye_x = cover_width * 2.0;
+  //  eye_y = cover_height * 2.0;
+  //  eye_z = eye_z * 2.0;
+  //} else if (language.equals("ita")) {
+  //} else if (language.equals("ger")) {
+  //} else if (language.equals("fre")) {
+  //}
 
   if (title_value + author_value < 60) {
     eye_x = title_value + author_value;
@@ -180,10 +188,11 @@ void moveCamera(float title_value, float author_value, float category_value) {
   pg.endCamera();
 
   if (!frame_passed) {
+    frame_passed = true;
     println();
     println(current_book, id, title, author);
     println("hsb:", hue, saturation, brightness);
-    println("txt:", author_value, title_value, category_value, language, type);
+    println("txt:", author_value, title_value, category, language, type);
     println("num:", eye_x, eye_y, eye_z, center_x, center_y, center_z);
     println("up :", up_x, up_y, up_z);
   }
