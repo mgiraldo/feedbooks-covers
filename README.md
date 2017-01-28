@@ -1,8 +1,10 @@
 # feedbooks-covers
 
 
-<img src="https://github.com/mgiraldo/feedbooks-covers/raw/master/output.png" width="200">
+<img src="https://github.com/mgiraldo/feedbooks-covers/raw/master/output1.png" width="200">
 <img src="https://github.com/mgiraldo/feedbooks-covers/raw/master/output2.png" width="200">
+<img src="https://github.com/mgiraldo/feedbooks-covers/raw/master/output3.png" width="200">
+<img src="https://github.com/mgiraldo/feedbooks-covers/raw/master/output4.png" width="200">
 
 a generative book cover based on some feedbooks.com public domain data
 
