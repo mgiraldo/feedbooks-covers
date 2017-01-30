@@ -10,7 +10,7 @@ JSONObject book;
 int current_book = 0;
 
 int last_frame = 0;
-int refresh_rate = 40;
+int refresh_rate = 40; // delay in frames between cover changes when auto refresh is active (based on 60fps frame rate)
 
 float cover_width = 700.0;
 float cover_height = 1050.0;
