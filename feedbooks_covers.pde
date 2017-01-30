@@ -17,7 +17,7 @@ float cover_height = 1050.0;
 float ratio = cover_height / cover_width;
 float x_ini = 10;
 float y_ini = 10;
-float depth_multiplier = 12;
+float depth_multiplier = 6;
 float letter_size = cover_width / 20.0;
 float line_height = letter_size * 2.0;
 int rotation_factor = 4;
@@ -341,10 +341,10 @@ float drawSentence(String sentence, float start_x, float start_y) {
     String word = words[i];
     int word_length = word.length();
     float word_width = letter_size * word_length;
-    float first_letter_offset = map(float(word.charAt(0)), 50, 500, 5, 60);
-    float rotation = first_letter_offset + float(word_length * rotation_factor);
+    float first_letter_offset = map(float(word.charAt(0)), 32, 591, 0, 10);
+    float rotation = (first_letter_offset * 6) + float(word_length * rotation_factor);
     if (word_length % 2 == 0) rotation = -rotation;
-    z = word_length * depth_multiplier;
+    z = (word_length + first_letter_offset * 10) * depth_multiplier;
     if (i % 2 == 0) {
       z = -z;
     }
@@ -353,6 +353,7 @@ float drawSentence(String sentence, float start_x, float start_y) {
       y = y + line_height * 2;
       sentence_height = sentence_height + line_height * 3;
     }
+    y += first_letter_offset * (line_height * 0.5);// push it a bit (to make serials a bit different) 
     pg.pushMatrix();
     pg.translate(x, y, -z);
     pg.rotateY(radians(rotation));
