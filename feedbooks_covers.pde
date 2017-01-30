@@ -33,9 +33,9 @@ PGraphics pg;
 PMatrix mat_scene;
 
 PFont title_font_sans, author_font_sans, title_font_serif, author_font_serif;
-int title_size = 55;
+int title_size = 70;
 int title_leading = title_size + 5;
-int author_size = 45;
+int author_size = 60;
 int author_leading = author_size + 5;
 
 void setup() {
@@ -237,14 +237,14 @@ void drawText() {
       pg.textFont(title_font_sans);
     }
     pg.textLeading(title_leading);
-    pg.text(title, margin, margin, text_width, (height - margin * 2) * .4);
+    pg.text(title, margin, margin, text_width, (height - margin * 2) * .6);
     if (is_fiction) {
       pg.textFont(author_font_serif);
     } else {
       pg.textFont(author_font_sans);
     }
     pg.textLeading(author_leading);
-    pg.text(author, margin, height * .5, text_width, (height - margin * 2) * .4);
+    pg.text(author, margin, height * .7, text_width, (height - margin * 2) * .3);
     pg.popMatrix();
   
     pg.pushMatrix();
@@ -255,14 +255,14 @@ void drawText() {
       pg.textFont(title_font_sans);
     }
     pg.textLeading(title_leading);
-    pg.text(title, margin, margin, text_width, (height - margin * 2) * .4);
+    pg.text(title, margin, margin, text_width, (height - margin * 2) * .6);
     if (is_fiction) {
       pg.textFont(author_font_serif);
     } else {
       pg.textFont(author_font_sans);
     }
     pg.textLeading(author_leading);
-    pg.text(author, margin, height * .5, text_width, (height - margin * 2) * .4);
+    pg.text(author, margin, height * .7, text_width, (height - margin * 2) * .3);
     pg.popMatrix();
   }
 
@@ -277,14 +277,14 @@ void drawText() {
     pg.textFont(title_font_sans);
   }
   pg.textLeading(title_leading);
-  pg.text(title, margin, margin, text_width, (height - margin * 2) * .4);
+  pg.text(title, margin, margin, text_width, (height - margin * 2) * .6);
   if (is_fiction) {
     pg.textFont(author_font_serif);
   } else {
     pg.textFont(author_font_sans);
   }
   pg.textLeading(author_leading);
-  pg.text(author, margin, height * .5, text_width, (height - margin * 2) * .4);
+  pg.text(author, margin, height * .7, text_width, (height - margin * 2) * .3);
 
   pg.popMatrix();
 }
