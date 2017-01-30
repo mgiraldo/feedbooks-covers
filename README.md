@@ -24,3 +24,5 @@ Keyboard controls:
 - `R` or `S` saves the current book in the output folder
 - `M` toggles mass record (activated with auto refresh)
 - `D` shows debug info in the cover (included on save)
+
+_Note: repeated ids: [15, 29, 654, 816, 874, 1072, 1174, 1326, 1492, 1505, 1549, 1957, 2677, 2872, 2898, 3005, 3274, 3520, 3673, 3687, 3696, 3723, 3765, 3803, 3877, 3976, 4081, 4411, 4544, 4878, 4910, 4939, 4976, 6626, 6648, 6648, 6660]_
